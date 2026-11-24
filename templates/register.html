@@ -1,0 +1,65 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Customer Registration | Mahesh Kirana Store{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card shadow p-4">
+                <h2 class="text-center text-success fw-bold mb-4">
+                    Create Account
+                </h2>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Name</label>
+                        {{ form.name }}
+                        {{ form.name.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Phone Number</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            class="form-control"
+                            placeholder="Enter 10-digit phone number"
+                            pattern="[6-9][0-9]{9}"
+                            maxlength="10"
+                            minlength="10"
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Password</label>
+                        {{ form.password }}
+                        {{ form.password.errors }}
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        Register
+                    </button>
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-0">
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="text-success fw-bold">
+                        Login
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

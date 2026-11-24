@@ -1,0 +1,553 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mahesh Kirana Store - Online Grocery{% endblock %}
+
+{% block content %}
+
+<!-- MAIN YELLOW HEADER -->
+<header class="mk-header">
+    <div class="mk-header-inner">
+
+        <a href="{% url 'home' %}" class="mk-logo">
+            🛒 Mahesh <span>Kirana</span>
+        </a>
+
+        <div class="mk-delivery">
+            <strong>Delivery in 10–30 minutes</strong>
+            <small>📍 Near Basaveshwar Circle, Bagalkot</small>
+        </div>
+
+        <!-- SEARCH FORM -->
+        <form method="GET" action="{% url 'home' %}" class="mk-search">
+            <span>🔍</span>
+            <input
+                type="text"
+                name="search"
+                placeholder="Search for groceries..."
+                value="{{ search|default:'' }}"
+            >
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="mk-header-actions">
+
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'cart' %}">🛒 Cart</a>
+            <a href="{% url 'my_orders' %}">My Orders</a>
+            <a href="{% url 'profile' %}">My Profile</a>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="mk-logout">Logout</button>
+            </form>
+
+        </div>
+    </div>
+</header>
+
+
+<!-- CATEGORY AND PROMOTIONAL SECTIONS -->
+{% if not search %}
+
+<!-- CATEGORY SECTION -->
+<section class="mk-category-section">
+    <div class="container">
+
+        <h5>Shop by Category</h5>
+
+        <div class="mk-category-list">
+
+            <a href="{% url 'home' %}#mk-products" class="mk-category">
+                <span>🛒</span>
+                <small>All</small>
+            </a>
+
+            {% for category in categories %}
+
+            <a href="{% url 'home' %}?category={{ category.id }}#mk-products"
+               class="mk-category">
+
+                {% if category.image %}
+                    <img src="{{ category.image.url }}"
+                         alt="{{ category.name }}">
+                {% else %}
+                    <span>🛍️</span>
+                {% endif %}
+
+                <small>{{ category.name }}</small>
+            </a>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+
+<!-- HERO BANNER -->
+<section class="mk-hero-section">
+    <div class="container">
+
+        <div class="mk-hero">
+
+            <div class="mk-hero-content">
+
+                <span>WELCOME TO MAHESH KIRANA STORE</span>
+
+                <h1>
+                    Everything You Need,
+                    <br>
+                    Delivered Fresh!
+                </h1>
+
+                <p>
+                    Your daily groceries, snacks and household essentials
+                    at great prices.
+                </p>
+
+                <a href="#mk-products">Shop Now →</a>
+
+            </div>
+
+            <div class="mk-hero-illustration">
+                🛒🥦🍎
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- BENEFITS -->
+<section class="mk-benefits">
+    <div class="container">
+
+        <div class="mk-benefit-grid">
+            <div>🚚 <strong>Quick Delivery</strong></div>
+            <div>🥬 <strong>Fresh Products</strong></div>
+            <div>💰 <strong>Best Prices</strong></div>
+            <div>🏠 <strong>Easy Shopping</strong></div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- OFFERS -->
+<section class="mk-offers-section">
+    <div class="container">
+
+        <div class="mk-section-heading">
+            <h2>Explore Our Store</h2>
+            <p>Everything for your everyday needs</p>
+        </div>
+
+        <div class="mk-offer-grid">
+
+            <div class="mk-offer-card mk-offer-yellow">
+                <span>🌾</span>
+                <h3>Daily Essentials</h3>
+                <p>Groceries for every day</p>
+                <a href="#mk-products">Shop Now →</a>
+            </div>
+
+            <div class="mk-offer-card mk-offer-green">
+                <span>🥬</span>
+                <h3>Fresh Picks</h3>
+                <p>Freshness for your family</p>
+                <a href="#mk-products">Explore →</a>
+            </div>
+
+            <div class="mk-offer-card mk-offer-pink">
+                <span>🍪</span>
+                <h3>Snacks & More</h3>
+                <p>Your favourite treats</p>
+                <a href="#mk-products">Shop Now →</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endif %}
+
+
+<!-- PRODUCT SHOPPING SECTION -->
+<section id="mk-products" class="mk-products-section">
+    <div class="container">
+
+        <!-- PRODUCT HEADING -->
+        <div class="mk-section-heading">
+
+            {% if search %}
+                <h2>Search Results for "{{ search }}"</h2>
+                <p>{{ products|length }} matching products</p>
+
+            {% elif selected_category %}
+                <h2>Filtered Products</h2>
+                <p>{{ products|length }} products in this category</p>
+
+            {% else %}
+                <h2>Our Products</h2>
+                <p>Fresh groceries at affordable prices</p>
+            {% endif %}
+
+        </div>
+
+
+        <!-- SORTING -->
+        <form method="GET" action="{% url 'home' %}"
+              class="d-flex flex-wrap justify-content-between gap-2 mb-4">
+
+            <input type="hidden" name="search"
+                   value="{{ search|default:'' }}">
+
+            {% if selected_category %}
+                <input type="hidden" name="category"
+                       value="{{ selected_category }}">
+            {% endif %}
+
+            <div>
+                <strong>{{ products|length }} Products</strong>
+            </div>
+
+            <select name="sort"
+                    class="form-select"
+                    style="max-width:220px;"
+                    onchange="this.form.submit()">
+
+                <option value="">Sort Products</option>
+
+                <option value="price_low"
+                    {% if sort_by == 'price_low' %}selected{% endif %}>
+                    Price: Low to High
+                </option>
+
+                <option value="price_high"
+                    {% if sort_by == 'price_high' %}selected{% endif %}>
+                    Price: High to Low
+                </option>
+
+                <option value="name_asc"
+                    {% if sort_by == 'name_asc' %}selected{% endif %}>
+                    Name: A to Z
+                </option>
+
+                <option value="name_desc"
+                    {% if sort_by == 'name_desc' %}selected{% endif %}>
+                    Name: Z to A
+                </option>
+
+            </select>
+        </form>
+
+
+        <!-- PRODUCT GRID -->
+        <div class="row g-3">
+
+            {% for item in products %}
+
+            {% with product=item.product %}
+
+            <div class="col-6 col-md-4 col-lg-3">
+
+                <div class="card h-100 shadow-sm border-0">
+
+                    <!-- PRODUCT IMAGE -->
+                    <div class="position-relative text-center p-2"
+                         style="height:180px;">
+
+                        {% if product.image and product.image.name %}
+
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ item.name }}"
+                                class="img-fluid"
+                                style="width:100%;height:100%;object-fit:contain;"
+                                onerror="this.style.display='none';"
+                            >
+
+                        {% else %}
+
+                            <div class="d-flex justify-content-center align-items-center h-100"
+                                 style="font-size:65px;">
+                                🌾
+                            </div>
+
+                        {% endif %}
+
+                        {% if item.is_spice %}
+
+                            <span class="badge bg-success position-absolute top-0 start-0 m-2">
+                                SPICE
+                            </span>
+
+                        {% elif product.product_type == 'loose' %}
+
+                            <span class="badge bg-success position-absolute top-0 start-0 m-2">
+                                LOOSE
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                PACKED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PRODUCT DETAILS -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h6 class="fw-bold mb-2">
+                            {{ item.name }}
+                        </h6>
+
+
+                        <!-- SPICE SIZE SELECTOR -->
+                        {% if item.is_spice %}
+
+                            <form method="POST"
+                                  action="{% url 'add_to_cart' product.id %}"
+                                  class="mt-auto spice-cart-form">
+
+                                {% csrf_token %}
+
+                                <label class="form-label fw-bold small">
+                                    Select Pack Size
+                                </label>
+
+                                <select
+                                    class="form-select mb-3 spice-size-select"
+                                    name="selected_product_id"
+                                    onchange="updateSpicePrice(this)"
+                                    required
+                                >
+
+                                    {% for variant in item.variants %}
+
+                                        <option
+                                            value="{{ variant.id }}"
+                                            data-price="{{ variant.price }}"
+                                            {% if variant.id == product.id %}selected{% endif %}
+                                            {% if variant.stock <= 0 %}disabled{% endif %}
+                                        >
+                                            {{ variant.pack_size|floatformat:"-2" }}
+                                            gm
+                                            {% if variant.stock <= 0 %}
+                                                - Out of Stock
+                                            {% endif %}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+                                <p class="text-muted small mb-1">
+                                    Selected Pack Price
+                                </p>
+
+                                <h5 class="text-success fw-bold spice-price">
+                                    ₹{{ product.price }}
+                                </h5>
+
+
+                                <label class="form-label fw-bold small">
+                                    Enter Quantity
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    class="form-control mb-2"
+                                    min="1"
+                                    step="1"
+                                    value="1"
+                                    required
+                                >
+
+                                <button type="submit"
+                                        class="btn btn-success w-100 mt-2">
+                                    🛒 Add to Cart
+                                </button>
+
+                            </form>
+
+
+                        {% else %}
+
+
+                            <!-- NORMAL PRODUCT PRICE -->
+                            <p class="text-muted small mb-2">
+
+                                {% if product.product_type == 'loose' %}
+
+                                    Price per {{ product.get_unit_display }}
+
+                                {% else %}
+
+                                    Pack size:
+                                    {{ product.pack_size|floatformat:"-2" }}
+                                    {{ product.get_unit_display }}
+
+                                {% endif %}
+
+                            </p>
+
+                            <h5 class="text-success fw-bold">
+                                ₹{{ product.price }}
+                            </h5>
+
+
+                            <!-- NORMAL ADD TO CART -->
+                            {% if product.stock > 0 %}
+
+                            <form method="POST"
+                                  action="{% url 'add_to_cart' product.id %}"
+                                  class="mt-auto">
+
+                                {% csrf_token %}
+
+                                {% if product.product_type == 'loose' %}
+
+                                    <label class="form-label fw-bold small">
+                                        Enter Weight (kg)
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        name="weight"
+                                        class="form-control mb-2"
+                                        placeholder="Example: 0.500"
+                                        min="0.001"
+                                        max="{{ product.stock }}"
+                                        step="0.001"
+                                        required
+                                    >
+
+                                    <small class="text-muted d-block mb-2">
+                                        0.250 = 250 g
+                                        <br>
+                                        0.500 = 500 g
+                                        <br>
+                                        1.000 = 1 kg
+                                    </small>
+
+                                {% else %}
+
+                                    <label class="form-label fw-bold small">
+                                        Enter Quantity
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        class="form-control mb-2"
+                                        placeholder="Number of packets"
+                                        min="1"
+                                        max="{{ product.stock }}"
+                                        step="1"
+                                        value="1"
+                                        required
+                                    >
+
+                                {% endif %}
+
+                                <button type="submit"
+                                        class="btn btn-success w-100 mt-2">
+                                    🛒 Add to Cart
+                                </button>
+
+                            </form>
+
+                            {% else %}
+
+                                <button class="btn btn-secondary w-100 mt-auto"
+                                        disabled>
+                                    Out of Stock
+                                </button>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+            {% endwith %}
+
+            {% empty %}
+
+            <!-- NO PRODUCTS FOUND -->
+            <div class="col-12 text-center py-5">
+
+                <h4>No Products Found</h4>
+
+                <p class="text-muted">
+                    Try another search or category.
+                </p>
+
+                <a href="{% url 'home' %}" class="btn btn-success">
+                    View All Products
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+<nav class="mk-mobile-nav">
+
+    <a href="{% url 'home' %}">
+        <span>🏠</span>
+        <small>Home</small>
+    </a>
+
+    <a href="{% url 'my_orders' %}">
+        <span>📦</span>
+        <small>Orders</small>
+    </a>
+
+    <a href="{% url 'cart' %}">
+        <span>🛒</span>
+        <small>Cart</small>
+    </a>
+
+    <a href="{% url 'profile' %}">
+        <span>👤</span>
+        <small>Profile</small>
+    </a>
+
+</nav>
+
+
+<!-- UPDATE SPICE PRICE WHEN SIZE CHANGES -->
+<script>
+function updateSpicePrice(selectElement) {
+
+    const selectedOption =
+        selectElement.options[selectElement.selectedIndex];
+
+    const selectedPrice = selectedOption.dataset.price;
+
+    const form = selectElement.closest('form');
+
+    const priceElement = form.querySelector('.spice-price');
+
+    priceElement.textContent = '₹' + selectedPrice;
+}
+</script>
+
+{% endblock %}

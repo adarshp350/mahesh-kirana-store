@@ -1,0 +1,194 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout | Mahesh Kirana Store{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <h3 class="fw-bold mb-4">Checkout</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="row">
+
+            <!-- Customer Information -->
+            <div class="col-lg-7">
+
+                <div class="card shadow-sm p-4 mb-4">
+
+                    <h5 class="fw-bold mb-3">
+                        Customer Information
+                    </h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Customer Name
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ customer.user.first_name }}"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Mobile Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            name="phone"
+                            class="form-control"
+                            value="{{ customer.phone }}"
+                            placeholder="Enter your 10-digit mobile number"
+                            pattern="[0-9]{10}"
+                            maxlength="10"
+                            minlength="10"
+                            inputmode="numeric"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <!-- Payment Method -->
+                <div class="card shadow-sm p-4">
+
+                    <h5 class="fw-bold mb-3">
+                        💳 Select Payment Method
+                    </h5>
+
+                    <div class="payment-option mb-3">
+
+                        <label class="d-flex align-items-center gap-2">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                value="COD"
+                                checked
+                                required
+                            >
+
+                            <span>
+                                <strong>Cash on Delivery</strong>
+                                <br>
+                                <small class="text-muted">
+                                    Pay when your order arrives.
+                                </small>
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="payment-option">
+
+                        <label class="d-flex align-items-center gap-2">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                value="UPI"
+                            >
+
+                            <span>
+                                <strong>UPI Payment</strong>
+                                <br>
+                                <small class="text-muted">
+                                    UPI payment gateway will be connected later.
+                                </small>
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+
+                <div class="cart-summary">
+
+                    <h5 class="fw-bold mb-3">
+                        Your Order
+                    </h5>
+
+                    {% for item in checkout_items %}
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <div>
+                            <strong>{{ item.product.name }}</strong>
+                            <br>
+                            <small class="text-muted">
+                                Quantity: {{ item.quantity }}
+                            </small>
+                        </div>
+
+                        <strong>
+                            ₹{{ item.subtotal }}
+                        </strong>
+
+                    </div>
+
+                    {% endfor %}
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+                        <span>Items Total</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-2">
+                        <span>Delivery Charge</span>
+                        <span class="text-success">FREE</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Grand Total</span>
+                        <span class="text-success">
+                            ₹{{ total_amount }}
+                        </span>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success w-100 mt-4"
+                    >
+                        Place Order
+                    </button>
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="btn btn-outline-secondary w-100 mt-2"
+                    >
+                        Back to Cart
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,123 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Orders | Mahesh Kirana Store{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <h3 class="fw-bold text-success mb-4">
+        📦 My Orders
+    </h3>
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap">
+
+                <div>
+                    <strong>Order #{{ order.id }}</strong>
+                    <br>
+                    <small class="text-muted">
+                        {{ order.created_at|date:"d M Y, h:i A" }}
+                    </small>
+                </div>
+
+                <span class="badge
+                    {% if order.status == 'Delivered' %}bg-success
+                    {% elif order.status == 'Cancelled' %}bg-danger
+                    {% else %}bg-warning text-dark{% endif %}">
+                    {{ order.status }}
+                </span>
+
+            </div>
+
+            <div class="card-body">
+
+                <h6 class="fw-bold mb-3">Ordered Products</h6>
+
+                {% for item in order.items.all %}
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Quantity: {{ item.quantity }}
+                        </small>
+                    </div>
+
+                    <strong>
+                        ₹{{ item.price|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+                {% endfor %}
+
+                <hr>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-2">
+                        <small class="text-muted">Payment Method</small>
+                        <br>
+                        <strong>{{ order.get_payment_method_display }}</strong>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <small class="text-muted">Phone Number</small>
+                        <br>
+                        <strong>{{ order.customer.phone|default:"Not provided" }}</strong>
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <span class="fw-bold">Total Amount</span>
+
+                    <h5 class="text-success fw-bold mb-0">
+                        ₹{{ order.total_amount|floatformat:2 }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card shadow-sm p-5 text-center">
+
+            <div style="font-size: 60px;">📦</div>
+
+            <h5 class="fw-bold mt-3">
+                No Orders Yet
+            </h5>
+
+            <p class="text-muted">
+                You haven't placed any orders yet.
+            </p>
+
+            <a href="{% url 'home' %}" class="btn btn-success">
+                Start Shopping
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

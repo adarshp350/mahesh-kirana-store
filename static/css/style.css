@@ -1,0 +1,758 @@
+
+/* =====================================
+   GENERAL STYLES
+===================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f8f9fa;
+    color: #222;
+}
+
+a {
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1400px;
+}
+
+
+/* =====================================
+   SINGLE YELLOW HEADER
+===================================== */
+
+.mk-header {
+    width: 100%;
+    background: #ffd447;
+    padding: 18px 0;
+    position: relative;
+    z-index: 100;
+}
+
+.mk-header-inner {
+    width: 94%;
+    max-width: 1500px;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+}
+
+.mk-logo {
+    color: #222;
+    font-size: 29px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.mk-logo span {
+    color: #168653;
+}
+
+.mk-delivery {
+    min-width: 205px;
+    color: #222;
+}
+
+.mk-delivery strong {
+    display: block;
+    font-size: 17px;
+}
+
+.mk-delivery small {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+
+/* SEARCH */
+
+.mk-search {
+    flex: 1;
+    min-width: 180px;
+
+    display: flex;
+    align-items: center;
+
+    background: white;
+    border-radius: 12px;
+    padding: 7px 8px;
+}
+
+.mk-search span {
+    padding: 0 10px;
+    font-size: 19px;
+}
+
+.mk-search input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    padding: 12px 5px;
+    font-size: 16px;
+}
+
+.mk-search button {
+    background: #168653;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mk-search button:hover {
+    background: #116b41;
+}
+
+
+/* HEADER NAVIGATION */
+
+.mk-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    white-space: nowrap;
+}
+
+.mk-header-actions a {
+    color: #222;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.mk-header-actions a:hover {
+    color: #168653;
+}
+
+.mk-header-actions form {
+    margin: 0;
+}
+
+.mk-logout {
+    background: #168653;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mk-logout:hover {
+    background: #116b41;
+}
+
+
+/* =====================================
+   CATEGORY SECTION
+===================================== */
+
+.mk-category-section {
+    background: white;
+    padding: 28px 0 35px;
+}
+
+.mk-category-section h5 {
+    font-size: 23px;
+    font-weight: 800;
+    margin-bottom: 25px;
+}
+
+.mk-category-list {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.mk-category {
+    width: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #222;
+    text-align: center;
+}
+
+.mk-category img,
+.mk-category > span {
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #f2f3f5;
+}
+
+.mk-category > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+}
+
+.mk-category small {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.mk-category:hover {
+    color: #168653;
+    transform: translateY(-3px);
+}
+
+
+/* =====================================
+   HERO SECTION
+===================================== */
+
+.mk-hero-section {
+    padding: 30px 0;
+    background: #f7f8fa;
+}
+
+.mk-hero {
+    min-height: 330px;
+    padding: 55px 70px;
+    border-radius: 25px;
+
+    background: linear-gradient(110deg, #fff0b8, #ffdf76);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.mk-hero-content {
+    max-width: 650px;
+}
+
+.mk-hero-content > span {
+    color: #168653;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.mk-hero-content h1 {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 25px 0 18px;
+}
+
+.mk-hero-content p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.mk-hero-content a {
+    display: inline-block;
+    background: #168653;
+    color: white;
+    padding: 14px 25px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.mk-hero-content a:hover {
+    background: #116b41;
+}
+
+.mk-hero-illustration {
+    font-size: 90px;
+    white-space: nowrap;
+}
+
+
+/* =====================================
+   BENEFITS
+===================================== */
+
+.mk-benefits {
+    background: white;
+    padding: 25px 0;
+}
+
+.mk-benefit-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    text-align: center;
+}
+
+.mk-benefit-grid div {
+    padding: 18px 10px;
+    background: #f7f8fa;
+    border-radius: 12px;
+    font-size: 17px;
+}
+
+
+/* =====================================
+   OFFERS
+===================================== */
+
+.mk-offers-section {
+    padding: 45px 0;
+    background: #f8f9fa;
+}
+
+.mk-section-heading {
+    margin-bottom: 25px;
+}
+
+.mk-section-heading h2 {
+    font-size: 27px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.mk-section-heading p {
+    color: #777;
+    margin: 0;
+}
+
+.mk-offer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.mk-offer-card {
+    padding: 28px;
+    border-radius: 18px;
+    min-height: 200px;
+}
+
+.mk-offer-card > span {
+    font-size: 40px;
+}
+
+.mk-offer-card h3 {
+    font-size: 23px;
+    font-weight: 800;
+    margin-top: 12px;
+}
+
+.mk-offer-card p {
+    color: #555;
+}
+
+.mk-offer-card a {
+    color: #168653;
+    font-weight: 700;
+}
+
+.mk-offer-yellow {
+    background: #fff0b8;
+}
+
+.mk-offer-green {
+    background: #dff5e5;
+}
+
+.mk-offer-pink {
+    background: #ffe1e9;
+}
+
+
+/* =====================================
+   PRODUCTS
+===================================== */
+
+.mk-products-section {
+    padding: 45px 0;
+    background: white;
+}
+
+.mk-product-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.mk-product-card {
+    background: white;
+    border: 1px solid #e9e9e9;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: 0.2s ease;
+}
+
+.mk-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+}
+
+.mk-product-image {
+    height: 175px;
+    padding: 15px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mk-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.mk-no-image {
+    font-size: 60px;
+    color: #999;
+}
+
+.mk-product-info {
+    padding: 15px;
+}
+
+.mk-product-info small {
+    color: #888;
+    font-size: 12px;
+}
+
+.mk-product-info h5 {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 8px 0;
+}
+
+.mk-product-info p {
+    color: #777;
+    font-size: 13px;
+    min-height: 35px;
+}
+
+.mk-product-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.mk-product-bottom strong {
+    font-size: 19px;
+    color: #222;
+}
+
+.mk-product-bottom form {
+    margin: 0;
+}
+
+.mk-add-button {
+    background: #168653;
+    color: white;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.mk-add-button:hover {
+    background: #116b41;
+}
+
+.mk-disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.mk-empty-products {
+    text-align: center;
+    padding: 50px 15px;
+    background: #f8f9fa;
+    border-radius: 15px;
+}
+
+
+/* =====================================
+   BOTTOM PROMOTION
+===================================== */
+
+.mk-bottom-promo {
+    background: #168653;
+    color: white;
+    text-align: center;
+    padding: 45px 15px;
+}
+
+.mk-bottom-promo h2 {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.mk-bottom-promo a {
+    display: inline-block;
+    background: white;
+    color: #168653;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+
+/* =====================================
+   FOOTER
+===================================== */
+
+.mk-footer {
+    background: #202b26;
+    color: white;
+    text-align: center;
+    padding: 35px 15px 20px;
+}
+
+.mk-footer h4 {
+    font-weight: 800;
+}
+
+.mk-footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin: 20px 0;
+}
+
+.mk-footer-links a {
+    color: white;
+}
+
+.mk-footer-copy {
+    color: #bbb;
+    font-size: 13px;
+    margin-top: 20px;
+}
+
+
+/* =====================================
+   MOBILE NAVIGATION
+===================================== */
+
+.mk-mobile-nav {
+    display: none;
+}
+
+
+/* =====================================
+   OTHER PAGE SUPPORT
+===================================== */
+
+.card {
+    border-radius: 14px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+}
+
+.btn-success {
+    background: #168653;
+    border-color: #168653;
+}
+
+.btn-success:hover {
+    background: #116b41;
+    border-color: #116b41;
+}
+
+
+/* =====================================
+   TABLET RESPONSIVE
+===================================== */
+
+@media (max-width: 1200px) {
+
+    .mk-header-inner {
+        flex-wrap: wrap;
+    }
+
+    .mk-search {
+        order: 3;
+        flex-basis: 100%;
+    }
+
+    .mk-product-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =====================================
+   MOBILE RESPONSIVE
+===================================== */
+
+@media (max-width: 767px) {
+
+    .mk-header {
+        padding: 15px 0;
+    }
+
+    .mk-header-inner {
+        width: 92%;
+        gap: 14px;
+    }
+
+    .mk-logo {
+        font-size: 23px;
+    }
+
+    .mk-delivery {
+        min-width: 0;
+        flex: 1;
+        font-size: 12px;
+    }
+
+    .mk-delivery strong {
+        font-size: 13px;
+    }
+
+    .mk-delivery small {
+        font-size: 11px;
+    }
+
+    .mk-search {
+        order: 3;
+        flex-basis: 100%;
+    }
+
+    .mk-header-actions {
+        order: 4;
+        flex-basis: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .mk-header-actions a {
+        font-size: 13px;
+    }
+
+    .mk-logout {
+        padding: 8px 11px;
+        font-size: 13px;
+    }
+
+    .mk-category-list {
+        gap: 18px;
+    }
+
+    .mk-category {
+        width: 85px;
+    }
+
+    .mk-category img,
+    .mk-category > span {
+        width: 75px;
+        height: 75px;
+    }
+
+    .mk-hero {
+        padding: 30px 22px;
+        min-height: 0;
+    }
+
+    .mk-hero-content h1 {
+        font-size: 30px;
+    }
+
+    .mk-hero-content p {
+        font-size: 15px;
+    }
+
+    .mk-hero-illustration {
+        display: none;
+    }
+
+    .mk-benefit-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mk-benefit-grid div {
+        font-size: 14px;
+    }
+
+    .mk-offer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mk-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .mk-product-image {
+        height: 135px;
+    }
+
+    .mk-product-info {
+        padding: 10px;
+    }
+
+    .mk-product-info h5 {
+        font-size: 14px;
+    }
+
+    .mk-product-bottom strong {
+        font-size: 16px;
+    }
+
+    .mk-add-button {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+
+    .mk-mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-top: 1px solid #ddd;
+        justify-content: space-around;
+        padding: 9px 0;
+        z-index: 999;
+    }
+
+    .mk-mobile-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #333;
+        font-size: 12px;
+    }
+
+    .mk-mobile-nav span {
+        font-size: 21px;
+    }
+
+    .mk-footer {
+        padding-bottom: 85px;
+    }
+
+}
+

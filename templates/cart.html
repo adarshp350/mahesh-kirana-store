@@ -1,0 +1,286 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Cart | Mahesh Kirana Store{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <h3 class="fw-bold mb-4">🛒 My Shopping Cart</h3>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if cart_items %}
+
+    <div class="row">
+
+        <!-- CART PRODUCTS -->
+        <div class="col-lg-8">
+
+            {% for item in cart_items %}
+
+            <div class="card shadow-sm mb-3 cart-item">
+
+                <div class="row g-0 align-items-center">
+
+                    <!-- PRODUCT IMAGE -->
+                    <div class="col-4 col-md-3">
+
+                        <div class="d-flex align-items-center justify-content-center p-2"
+                             style="height:180px; background:#fff;">
+
+                            {% if item.product.image and item.product.image.name %}
+
+                                <img
+                                    src="{{ item.product.image.url }}"
+                                    alt="{{ item.product.name }}"
+                                    style="width:100%;height:160px;object-fit:contain;"
+                                >
+
+                            {% else %}
+
+                                <div style="font-size:55px;">
+                                    🛍️
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRODUCT DETAILS -->
+                    <div class="col-8 col-md-9">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-2">
+                                {{ item.product.name }}
+                            </h5>
+
+
+                            <!-- LOOSE PRODUCTS -->
+                            {% if item.product.product_type == 'loose' %}
+
+                                <span class="badge bg-success">
+                                    LOOSE PRODUCT
+                                </span>
+
+                                <p class="text-muted small mt-2 mb-1">
+                                    Price per {{ item.product.get_unit_display }}:
+                                    ₹{{ item.product.price }}
+                                </p>
+
+                                <p class="fw-bold text-success mb-2">
+                                    Selected Weight:
+                                    {{ item.quantity|floatformat:"-3" }}
+                                    {{ item.product.get_unit_display }}
+                                </p>
+
+
+                            <!-- PACKED PRODUCTS -->
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    PACKED PRODUCT
+                                </span>
+
+                                <p class="text-muted small mt-2 mb-1">
+                                    Price per packet:
+                                    ₹{{ item.product.price }}
+                                </p>
+
+                                <p class="fw-bold text-success mb-2">
+                                    Quantity:
+                                    {{ item.quantity|floatformat:"0" }}
+                                    packet(s)
+
+                                    {% if item.product.pack_size %}
+                                        ({{ item.product.pack_size|floatformat:"-2" }}
+                                        {{ item.product.get_unit_display }})
+                                    {% endif %}
+                                </p>
+
+                            {% endif %}
+
+
+                            <!-- QUANTITY CONTROLS -->
+                            <div class="d-flex align-items-center gap-2 mb-3">
+
+                                <!-- DECREASE -->
+                                <form method="POST"
+                                      action="{% url 'update_cart' item.product.id %}">
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        name="action"
+                                        value="decrease"
+                                        class="btn btn-outline-success quantity-btn">
+                                        −
+                                    </button>
+
+                                </form>
+
+
+                                <span class="fw-bold">
+
+                                    {% if item.product.product_type == 'loose' %}
+
+                                        {{ item.quantity|floatformat:"-3" }}
+                                        {{ item.product.get_unit_display }}
+
+                                    {% else %}
+
+                                        {{ item.quantity|floatformat:"0" }}
+
+                                    {% endif %}
+
+                                </span>
+
+
+                                <!-- INCREASE -->
+                                <form method="POST"
+                                      action="{% url 'update_cart' item.product.id %}">
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        name="action"
+                                        value="increase"
+                                        class="btn btn-outline-success quantity-btn">
+                                        +
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+
+                            <!-- SUBTOTAL -->
+                            <p class="fw-bold mb-2">
+                                Subtotal:
+                                <span class="text-success">
+                                    ₹{{ item.subtotal }}
+                                </span>
+                            </p>
+
+
+                            <!-- REMOVE PRODUCT -->
+                            <form method="POST"
+                                  action="{% url 'remove_from_cart' item.product.id %}">
+
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+                                    Remove
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- BILL SUMMARY -->
+        <div class="col-lg-4">
+
+            <div class="cart-summary p-4 bg-white rounded shadow-sm">
+
+                <h5 class="fw-bold mb-3">
+                    Bill Details
+                </h5>
+
+                <div class="d-flex justify-content-between">
+                    <span>Items Total</span>
+                    <span>₹{{ total_amount }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <span>Delivery Charge</span>
+                    <span class="text-success">FREE</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Grand Total</span>
+
+                    <span class="text-success">
+                        ₹{{ total_amount }}
+                    </span>
+                </div>
+
+
+                <!-- CHECKOUT -->
+                <a href="{% url 'checkout' %}"
+                   class="btn btn-success w-100 mt-3"
+                   style="padding:12px;font-weight:600;">
+
+                    Proceed to Checkout
+
+                </a>
+
+
+                <!-- CONTINUE SHOPPING -->
+                <a href="{% url 'home' %}"
+                   class="btn btn-outline-success w-100 mt-2">
+
+                    Continue Shopping
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- EMPTY CART -->
+    <div class="text-center bg-white rounded shadow-sm p-5">
+
+        <div style="font-size:70px;">
+            🛒
+        </div>
+
+        <h4 class="fw-bold mt-3">
+            Your Cart is Empty
+        </h4>
+
+        <p class="text-muted">
+            Add your favourite grocery products to your cart.
+        </p>
+
+        <a href="{% url 'home' %}" class="btn btn-success">
+            Start Shopping
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
