@@ -78,8 +78,8 @@ def home(request):
         )
 
         is_biscuit_packed = (
-            'biscuit' in category_name and
-            product.product_type == 'packed'
+            ('biscuit' in category_name or 'personal care' in category_name)
+            and product.product_type == 'packed'
         )
 
         if is_spice:
