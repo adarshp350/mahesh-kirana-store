@@ -41,6 +41,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
@@ -53,6 +54,7 @@ class ProductAdmin(admin.ModelAdmin):
         'unit',
         'pack_size',
         'price',
+        'stock',
         'is_available',
     )
 
@@ -61,7 +63,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
     list_filter = ('category', 'product_type', 'is_available')
 
-    list_editable = ('price', 'is_available')
+    list_editable = ('price', 'stock', 'is_available')
 
     readonly_fields = ('product_image_preview',)
 
@@ -81,6 +83,7 @@ class ProductAdmin(admin.ModelAdmin):
                 'product_type',
                 'unit',
                 'pack_size',
+                'stock',
             )
         }),
 
