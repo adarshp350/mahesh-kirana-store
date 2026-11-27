@@ -11,7 +11,10 @@ from django.db import transaction
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 
-from .models import Category, Product, Customer, Order, OrderItem
+from .models import (
+    Category, Product, Customer, Order, OrderItem,
+    StorePaymentSettings
+)
 from .forms import CustomerRegistrationForm
 
 User = get_user_model()
@@ -484,6 +487,7 @@ def customer_logout(request):
 
 
 
+
 @login_required(login_url='login')
 def checkout(request):
 
@@ -499,24 +503,41 @@ def checkout(request):
         messages.error(request, 'Customer profile not found.')
         return redirect('home')
 
+    store_payment_settings = StorePaymentSettings.objects.first()
+
     if request.method == 'POST':
 
         phone = request.POST.get('phone', '').strip()
         payment_method = request.POST.get('payment_method')
 
+       
+        payment_receipt = request.FILES.get('payment_receipt')
+
         if not phone.isdigit() or len(phone) != 10:
-            messages.error(
-                request,
-                'Please enter a valid 10-digit phone number.'
-            )
+            messages.error(request, 'Please enter a valid 10-digit phone number.')
             return redirect('checkout')
 
         if payment_method not in ['COD', 'UPI']:
-            messages.error(
-                request,
-                'Please select a valid payment method.'
-            )
+            messages.error(request, 'Please select a valid payment method.')
             return redirect('checkout')
+
+        if payment_method == 'UPI':
+
+            if not store_payment_settings or not store_payment_settings.upi_id or not store_payment_settings.qr_code:
+                messages.error(request, 'Store UPI payment details are not configured.')
+                return redirect('checkout')
+
+            if not payment_receipt:
+                messages.error(request, 'Please upload your UPI payment receipt.')
+                return redirect('checkout')
+
+            if not payment_receipt.content_type.startswith('image/'):
+                messages.error(request, 'Please upload a valid image receipt.')
+                return redirect('checkout')
+
+            if payment_receipt.size > 5 * 1024 * 1024:
+                messages.error(request, 'Receipt image must be smaller than 5 MB.')
+                return redirect('checkout')
 
         address = 'Not provided'
 
@@ -547,8 +568,7 @@ def checkout(request):
                             )
 
                     subtotal = calculate_product_subtotal(
-                        product,
-                        quantity
+                        product, quantity
                     )
 
                     total_amount += subtotal
@@ -562,6 +582,14 @@ def checkout(request):
                     total_amount=total_amount,
                     address=address,
                     payment_method=payment_method,
+                    payment_status=(
+                        'Pending Verification'
+                        if payment_method == 'UPI'
+                        else 'Not Required'
+                    ),
+                    payment_receipt=(
+                        payment_receipt if payment_method == 'UPI' else None
+                    ),
                     status='Pending'
                 )
 
@@ -588,10 +616,7 @@ def checkout(request):
             return redirect('my_orders')
 
         except Product.DoesNotExist:
-            messages.error(
-                request,
-                'A product is no longer available.'
-            )
+            messages.error(request, 'A product is no longer available.')
             return redirect('cart')
 
         except (ValueError, TypeError, ArithmeticError) as error:
@@ -615,8 +640,7 @@ def checkout(request):
                 raise ValueError('Invalid product quantity.')
 
             subtotal = calculate_product_subtotal(
-                product,
-                quantity
+                product, quantity
             )
 
             checkout_items.append({
@@ -643,6 +667,7 @@ def checkout(request):
         'customer': customer,
         'checkout_items': checkout_items,
         'total_amount': total_amount,
+        'store_payment_settings': store_payment_settings,
     }
 
     return render(request, 'checkout.html', context)

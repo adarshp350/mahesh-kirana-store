@@ -10,106 +10,114 @@
 
     <h3 class="fw-bold mb-4">Checkout</h3>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="row">
 
-            <!-- Customer Information -->
             <div class="col-lg-7">
 
+                <!-- Customer Information -->
                 <div class="card shadow-sm p-4 mb-4">
 
-                    <h5 class="fw-bold mb-3">
-                        Customer Information
-                    </h5>
+                    <h5 class="fw-bold mb-3">Customer Information</h5>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Customer Name
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            value="{{ customer.user.first_name }}"
-                            readonly
-                        >
+                        <label class="form-label fw-bold">Customer Name</label>
+                        <input type="text" class="form-control"
+                               value="{{ customer.user.first_name }}" readonly>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Mobile Number
-                        </label>
-
-                        <input
-                            type="tel"
-                            name="phone"
-                            class="form-control"
-                            value="{{ customer.phone }}"
-                            placeholder="Enter your 10-digit mobile number"
-                            pattern="[0-9]{10}"
-                            maxlength="10"
-                            minlength="10"
-                            inputmode="numeric"
-                            required
-                        >
+                        <label class="form-label fw-bold">Mobile Number</label>
+                        <input type="tel" name="phone" class="form-control"
+                               value="{{ customer.phone }}"
+                               placeholder="Enter your 10-digit mobile number"
+                               pattern="[0-9]{10}" maxlength="10"
+                               minlength="10" inputmode="numeric" required>
                     </div>
 
                 </div>
 
                 <!-- Payment Method -->
-                <div class="card shadow-sm p-4">
+                <div class="card shadow-sm p-4 mb-4">
 
-                    <h5 class="fw-bold mb-3">
-                        💳 Select Payment Method
-                    </h5>
+                    <h5 class="fw-bold mb-3">💳 Select Payment Method</h5>
 
-                    <div class="payment-option mb-3">
-
+                    <div class="mb-3">
                         <label class="d-flex align-items-center gap-2">
-
-                            <input
-                                type="radio"
-                                name="payment_method"
-                                value="COD"
-                                checked
-                                required
-                            >
-
+                            <input type="radio" name="payment_method"
+                                   value="COD" checked required>
                             <span>
-                                <strong>Cash on Delivery</strong>
-                                <br>
+                                <strong>Cash on Delivery</strong><br>
                                 <small class="text-muted">
                                     Pay when your order arrives.
                                 </small>
                             </span>
-
                         </label>
-
                     </div>
 
                     <hr>
 
-                    <div class="payment-option">
-
+                    <div>
                         <label class="d-flex align-items-center gap-2">
-
-                            <input
-                                type="radio"
-                                name="payment_method"
-                                value="UPI"
-                            >
-
+                            <input type="radio" name="payment_method"
+                                   value="UPI">
                             <span>
-                                <strong>UPI Payment</strong>
-                                <br>
+                                <strong>UPI Payment</strong><br>
                                 <small class="text-muted">
-                                    UPI payment gateway will be connected later.
+                                    Pay using the store's UPI QR code.
                                 </small>
                             </span>
-
                         </label>
+                    </div>
+
+                    <!-- UPI Details -->
+                    <div id="upiDetails" class="mt-4 p-3 border rounded"
+                         style="display:none;">
+
+                        <h5 class="fw-bold text-success">
+                            Scan and Pay
+                        </h5>
+
+                        {% if store_payment_settings and store_payment_settings.qr_code %}
+                            <div class="text-center my-3">
+                                <img src="{{ store_payment_settings.qr_code.url }}"
+                                     alt="Store UPI QR Code"
+                                     class="img-fluid"
+                                     style="max-width:250px;">
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                Store UPI QR code is not available.
+                                Please contact the store owner.
+                            </div>
+                        {% endif %}
+
+                        {% if store_payment_settings %}
+                            <p class="text-center">
+                                <strong>UPI ID:</strong><br>
+                                <span>{{ store_payment_settings.upi_id }}</span>
+                            </p>
+                        {% endif %}
+
+                        <hr>
+
+                        
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Upload Payment Screenshot / Receipt
+                            </label>
+                            <input type="file" name="payment_receipt"
+                                   id="paymentReceipt"
+                                   class="form-control"
+                                   accept="image/*">
+                        </div>
+
+                        <small class="text-muted">
+                            Your payment will be verified by the store owner.
+                        </small>
 
                     </div>
 
@@ -122,26 +130,19 @@
 
                 <div class="cart-summary">
 
-                    <h5 class="fw-bold mb-3">
-                        Your Order
-                    </h5>
+                    <h5 class="fw-bold mb-3">Your Order</h5>
 
                     {% for item in checkout_items %}
 
                     <div class="d-flex justify-content-between mb-3">
-
                         <div>
-                            <strong>{{ item.product.name }}</strong>
-                            <br>
+                            <strong>{{ item.product.name }}</strong><br>
                             <small class="text-muted">
                                 Quantity: {{ item.quantity }}
                             </small>
                         </div>
 
-                        <strong>
-                            ₹{{ item.subtotal }}
-                        </strong>
-
+                        <strong>₹{{ item.subtotal }}</strong>
                     </div>
 
                     {% endfor %}
@@ -162,22 +163,15 @@
 
                     <div class="d-flex justify-content-between fw-bold">
                         <span>Grand Total</span>
-                        <span class="text-success">
-                            ₹{{ total_amount }}
-                        </span>
+                        <span class="text-success">₹{{ total_amount }}</span>
                     </div>
 
-                    <button
-                        type="submit"
-                        class="btn btn-success w-100 mt-4"
-                    >
+                    <button type="submit" class="btn btn-success w-100 mt-4">
                         Place Order
                     </button>
 
-                    <a
-                        href="{% url 'cart' %}"
-                        class="btn btn-outline-secondary w-100 mt-2"
-                    >
+                    <a href="{% url 'cart' %}"
+                       class="btn btn-outline-secondary w-100 mt-2">
                         Back to Cart
                     </a>
 
@@ -190,5 +184,36 @@
     </form>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const paymentOptions = document.querySelectorAll(
+        'input[name="payment_method"]'
+    );
+
+    const upiDetails = document.getElementById('upiDetails');
+    const paymentReceipt = document.getElementById('paymentReceipt');
+
+    function updatePaymentFields() {
+        const selected = document.querySelector(
+            'input[name="payment_method"]:checked'
+        );
+
+        const isUPI = selected && selected.value === 'UPI';
+
+        upiDetails.style.display = isUPI ? 'block' : 'none';
+
+        paymentReceipt.required = isUPI;
+    }
+
+    paymentOptions.forEach(function (option) {
+        option.addEventListener('change', updatePaymentFields);
+    });
+
+    updatePaymentFields();
+
+});
+</script>
 
 {% endblock %}
