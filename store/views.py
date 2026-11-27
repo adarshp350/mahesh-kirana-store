@@ -483,6 +483,7 @@ def customer_logout(request):
 # -------------------------
 
 
+
 @login_required(login_url='login')
 def checkout(request):
 
@@ -527,20 +528,18 @@ def checkout(request):
 
                 for product_id, saved_quantity in cart_data.items():
 
-                    product = Product.objects.select_for_update().get(
+                    product = Product.objects.get(
                         id=product_id,
                         is_available=True
                     )
 
                     quantity = Decimal(str(saved_quantity))
-                    available_stock = Decimal(str(product.stock))
 
-                    if quantity <= 0 or quantity > available_stock:
+                    if quantity <= 0:
                         raise ValueError(
-                            f'Insufficient stock for {product.name}.'
+                            f'Invalid quantity for {product.name}.'
                         )
 
-                    # Packed products must have whole-number quantities
                     if product.product_type == 'packed':
                         if quantity != quantity.to_integral_value():
                             raise ValueError(
@@ -575,12 +574,6 @@ def checkout(request):
                         price=product.price
                     )
 
-                    product.stock = (
-                        Decimal(str(product.stock)) - quantity
-                    )
-
-                    product.save(update_fields=['stock'])
-
                 customer.phone = phone
                 customer.save(update_fields=['phone'])
 
@@ -605,7 +598,6 @@ def checkout(request):
             messages.error(request, str(error))
             return redirect('cart')
 
-    # Prepare checkout summary
     checkout_items = []
     total_amount = Decimal('0.00')
 
@@ -618,14 +610,9 @@ def checkout(request):
             )
 
             quantity = Decimal(str(saved_quantity))
-            available_stock = Decimal(str(product.stock))
 
-            if quantity <= 0 or quantity > available_stock:
-                messages.warning(
-                    request,
-                    f'Please check available stock for {product.name}.'
-                )
-                return redirect('cart')
+            if quantity <= 0:
+                raise ValueError('Invalid product quantity.')
 
             subtotal = calculate_product_subtotal(
                 product,
@@ -659,6 +646,7 @@ def checkout(request):
     }
 
     return render(request, 'checkout.html', context)
+
 
 # -------------------------
 # CUSTOMER ORDER HISTORY
