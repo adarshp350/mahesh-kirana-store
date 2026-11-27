@@ -44,17 +44,9 @@ def home(request):
     category_id = request.GET.get('category', '').strip()
     sort_by = request.GET.get('sort', '')
 
-    categories = Category.objects.filter(
-        Q(name__icontains='Daily Essentials') |
-        Q(name__icontains='ದಿನಸಿ ಅಗತ್ಯ ವಸ್ತುಗಳು') |
-        Q(name__icontains='ಧಾನ್ಯಗಳು') |
-        Q(name__icontains='ಎಣ್ಣೆ') |
-        Q(name__icontains='Beverages') |
-        Q(name__icontains='Pulses') |
-        Q(name__icontains='ಬೇಳೆಕಾಳುಗಳು') |
-        Q(name__icontains='Spices') |
-        Q(name__icontains='ಮಸಾಲೆ ಪದಾರ್ಥಗಳು')
-    ).order_by('id')
+
+    categories = Category.objects.all().order_by('id')
+
 
     product_queryset = Product.objects.filter(
         is_available=True
