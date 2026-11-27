@@ -329,16 +329,18 @@
                                     required
                                 >
 
-                                    {% for variant in item.variants %}
+                                    
+{% for variant in item.variants %}
 
-                                        <option
-                                            value="{{ variant.id }}"
-                                            data-price="{{ variant.price }}"
-                                            {% if variant.id == product.id %}selected{% endif %}
-        
-                                        </option>
+    <option
+        value="{{ variant.id }}"
+        data-price="{{ variant.price }}"
+        {% if variant.id == product.id %}selected{% endif %}
+    >
+        {{ variant.pack_size|floatformat:"-2" }} {{ variant.get_unit_display }}
+    </option>
 
-                                    {% endfor %}
+{% endfor %}
 
                                 </select>
 
