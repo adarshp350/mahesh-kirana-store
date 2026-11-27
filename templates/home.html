@@ -335,13 +335,7 @@
                                             value="{{ variant.id }}"
                                             data-price="{{ variant.price }}"
                                             {% if variant.id == product.id %}selected{% endif %}
-                                            {% if variant.stock <= 0 %}disabled{% endif %}
-                                        >
-                                            {{ variant.pack_size|floatformat:"-2" }}
-                                            gm
-                                            {% if variant.stock <= 0 %}
-                                                - Out of Stock
-                                            {% endif %}
+        
                                         </option>
 
                                     {% endfor %}
@@ -406,7 +400,7 @@
 
 
                             <!-- NORMAL ADD TO CART -->
-                            {% if product.stock > 0 %}
+                           {% if product.is_available %}
 
                             <form method="POST"
                                   action="{% url 'add_to_cart' product.id %}"
@@ -426,7 +420,7 @@
                                         class="form-control mb-2"
                                         placeholder="Example: 0.500"
                                         min="0.001"
-                                        max="{{ product.stock }}"
+                                        
                                         step="0.001"
                                         required
                                     >
@@ -451,7 +445,7 @@
                                         class="form-control mb-2"
                                         placeholder="Number of packets"
                                         min="1"
-                                        max="{{ product.stock }}"
+                                        
                                         step="1"
                                         value="1"
                                         required

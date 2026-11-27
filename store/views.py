@@ -154,6 +154,7 @@ def home(request):
 # -------------------------
 
 
+
 @require_POST
 def add_to_cart(request, product_id):
 
@@ -196,29 +197,18 @@ def add_to_cart(request, product_id):
         current_quantity = Decimal('0')
 
     total_quantity = current_quantity + quantity
-    available_stock = Decimal(str(product.stock))
 
-    if total_quantity <= available_stock:
+    cart_data[cart_key] = str(total_quantity)
 
-        cart_data[cart_key] = str(total_quantity)
+    request.session['cart'] = cart_data
+    request.session.modified = True
 
-        request.session['cart'] = cart_data
-        request.session.modified = True
-
-        messages.success(
-            request,
-            f'{product.name} added to cart.'
-        )
-
-    else:
-        messages.warning(
-            request,
-            f'Available stock: {available_stock} {product.unit}.'
-        )
+    messages.success(
+        request,
+        f'{product.name} added to cart.'
+    )
 
     return redirect('cart')
-
-
 
 # -------------------------
 # SHOPPING CART
