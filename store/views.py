@@ -215,14 +215,13 @@ def add_to_cart(request, product_id):
 # -------------------------
 
 
-def cart(request):
 
+def cart(request):
     cart_data = request.session.get('cart', {})
     cart_items = []
     total_amount = Decimal('0.00')
 
     for product_id, saved_quantity in cart_data.items():
-
         try:
             product = Product.objects.get(
                 id=product_id,
@@ -230,13 +229,6 @@ def cart(request):
             )
 
             quantity = Decimal(str(saved_quantity))
-            available_stock = Decimal(str(product.stock))
-
-            if quantity <= 0:
-                continue
-
-            if quantity > available_stock:
-                quantity = available_stock
 
             if quantity <= 0:
                 continue
@@ -268,6 +260,7 @@ def cart(request):
     }
 
     return render(request, 'cart.html', context)
+
 
 
 # -------------------------
