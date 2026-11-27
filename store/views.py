@@ -40,16 +40,14 @@ def calculate_product_subtotal(product, quantity):
 # -------------------------
 
 
+
 @login_required(login_url='/login/')
 def home(request):
-
     search = request.GET.get('search', '').strip()
     category_id = request.GET.get('category', '').strip()
     sort_by = request.GET.get('sort', '')
 
-
     categories = Category.objects.all().order_by('id')
-
 
     product_queryset = Product.objects.filter(
         is_available=True
@@ -68,24 +66,30 @@ def home(request):
         )
 
     grouped_products = {}
-    processed_spice_groups = set()
+    processed_groups = set()
 
     for product in product_queryset.order_by('id'):
 
-        is_grouped = (
-    'Spices' in product.category.name or
-    'ಮಸಾಲೆ ಪದಾರ್ಥಗಳು' in product.category.name
-)
+        category_name = product.category.name.lower()
 
-        if is_grouped:
+        is_spice = (
+            'spice' in category_name or
+            'ಮಸಾಲೆ ಪದಾರ್ಥಗಳು' in product.category.name
+        )
 
+        is_biscuit_packed = (
+            'biscuit' in category_name and
+            product.product_type == 'packed'
+        )
+
+        if is_spice:
             group_name = product.description.strip()
             group_key = (product.category_id, group_name)
 
-            if group_key in processed_spice_groups:
+            if group_key in processed_groups:
                 continue
 
-            processed_spice_groups.add(group_key)
+            processed_groups.add(group_key)
 
             variants = list(
                 Product.objects.filter(
@@ -101,10 +105,39 @@ def home(request):
                     'product': variants[0],
                     'variants': variants,
                     'is_spice': True,
+                    'is_price_variant': False,
+                }
+
+        elif is_biscuit_packed:
+            group_key = (
+                product.category_id,
+                product.name.strip().lower()
+            )
+
+            if group_key in processed_groups:
+                continue
+
+            processed_groups.add(group_key)
+
+            variants = list(
+                Product.objects.filter(
+                    category=product.category,
+                    name__iexact=product.name.strip(),
+                    product_type='packed',
+                    is_available=True
+                ).order_by('price', 'id')
+            )
+
+            if variants:
+                grouped_products[group_key] = {
+                    'name': product.name,
+                    'product': variants[0],
+                    'variants': variants,
+                    'is_spice': False,
+                    'is_price_variant': True,
                 }
 
         else:
-
             group_key = ('product', product.id)
 
             grouped_products[group_key] = {
@@ -112,22 +145,19 @@ def home(request):
                 'product': product,
                 'variants': [product],
                 'is_spice': False,
+                'is_price_variant': False,
             }
 
     products = list(grouped_products.values())
 
     if sort_by == 'price_low':
         products.sort(
-            key=lambda item: min(
-                variant.price for variant in item['variants']
-            )
+            key=lambda item: min(v.price for v in item['variants'])
         )
 
     elif sort_by == 'price_high':
         products.sort(
-            key=lambda item: max(
-                variant.price for variant in item['variants']
-            ),
+            key=lambda item: max(v.price for v in item['variants']),
             reverse=True
         )
 
@@ -149,7 +179,6 @@ def home(request):
     }
 
     return render(request, 'home.html', context)
-
 
 
 # -------------------------
